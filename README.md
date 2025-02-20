@@ -2,5 +2,5 @@
 ![Screenshot](Dataminers.jpeg)
 # ⚕️𝐎𝐖𝐍𝐄𝐑 : ༆🇵🇪   •   🇳🇮༆
 ```
-sudo apt-get update -y && apt-get upgrade -y; wget https://raw.githubusercontent.com/ADM-PERU/VIP/main/instgerador.sh; chmod 777 instgerador.sh && ./instgerador.sh
+sudo apt-get update -y && apt-get upgrade -y; wget https://raw.githubusercontent.com/GM-VIP/SCRIPT/main/instgerador.sh; chmod 777 instgerador.sh && ./instgerador.sh
 ```
