@@ -11,7 +11,7 @@ echo "$IP" > /usr/bin/vendor_code
 function_verify () {
 #echo -e "verificando..."
  #check_ip
-  permited=$(curl -sSL "https://raw.githubusercontent.com/ELITE-MUNDIAL/BOT/main/TeleBotGen/Control/Control-Bot")
+  permited=$(curl -sSL "https://raw.githubusercontent.com/GM-VIP/BOT/main/TeleBotGen/Control/Control-Bot")
   [[ $(echo $permited|grep "${IP}") = "" ]] && {
   clear
   echo -e "\n\n\n\e[31m====================================================="
@@ -20,7 +20,7 @@ function_verify () {
   exit 1
   } || {
   ### INTALAR VERCION DE SCRIPT
-  v1=$(curl -sSL "https://raw.githubusercontent.com/ELITE-MUNDIAL/BOT/main/Vercion")
+  v1=$(curl -sSL "https://raw.githubusercontent.com/GM-VIP/BOT/main/Vercion")
   echo "$v1" > /etc/ADM-db/vercion
   }
 }
@@ -34,7 +34,7 @@ SRC="${CIDdir}/sources" && [[ ! -d ${SRC} ]] && mkdir ${SRC}
 CID="${CIDdir}/User-ID" && [[ ! -e ${CID} ]] && echo > ${CID}
 keytxt="${CIDdir}/keys" && [[ ! -d ${keytxt} ]] && mkdir ${keytxt}
 [[ $(dpkg --get-selections|grep -w "jq"|head -1) ]] || apt-get install jq -y &>/dev/null
-[[ ! -e "/bin/ShellBot.sh" ]] && wget -O /bin/ShellBot.sh https://raw.githubusercontent.com/ELITE-MUNDIAL/BOT/main/ShellBot.sh &> /dev/null
+[[ ! -e "/bin/ShellBot.sh" ]] && wget -O /bin/ShellBot.sh https://raw.githubusercontent.com/GM-VIP/BOT/main/ShellBot.sh &> /dev/null
 [[ -e /etc/texto-bot ]] && rm /etc/texto-bot
 LINE=" "
 
