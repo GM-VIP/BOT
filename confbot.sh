@@ -1,10 +1,10 @@
 #!/bin/bash
-SCPresq="aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0VMSVRFLU1VTkRJQUwvQk9UL21haW4vVGVsZUJvdEdlbi9zb3VyY2Vz"
+SCPresq="aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0dNLVZJUC9CT1QvbWFpbi9UZWxlQm90R2VuL3NvdXJjZXM="
 SUB_DOM='base64 -d'
 bar="\e[0;36m=====================================================\e[0m"
 
 CIDdir=/etc/ADM-db && [[ ! -d ${CIDdir} ]] && mkdir ${CIDdir}
-wget -O /etc/ADM-db/BotGen.sh https://raw.githubusercontent.com/ELITE-MUNDIAL/BOT/main/TeleBotGen/sources/BotGen.sh; chmod 777 /etc/ADM-db/BotGen.sh
+wget -O /etc/ADM-db/BotGen.sh https://raw.githubusercontent.com/GM-VIP/BOT/main/TeleBotGen/sources/BotGen.sh; chmod 777 /etc/ADM-db/BotGen.sh
 
 tr=${id}
 check_ip () {
@@ -17,7 +17,7 @@ echo "$IP" > /usr/bin/vendor_code
 function_verify () {
 #echo -e "verificando..."
 # check_ip
- permited=$(curl -sSL "https://raw.githubusercontent.com/ELITE-MUNDIAL/BOT/main/TeleBotGen/Control/Control-Bot")
+ permited=$(curl -sSL "https://raw.githubusercontent.com/GM-VIP/BOT/main/TeleBotGen/Control/Control-Bot")
   [[ $(echo $permited|grep "${IP}") = "" ]] && {
   clear
   echo -e "\n\n\n\e[31m====================================================="
@@ -34,9 +34,9 @@ function_verify () {
   echo -e "\e[32m=====================================================\n\n\n\e[0m"
   sleep 5
   CIDdir=/etc/ADM-db && [[ ! -d ${CIDdir} ]] && mkdir ${CIDdir}
-  v1=$(curl -sSL "https://raw.githubusercontent.com/ELITE-MUNDIAL/BOT/main/Vercion")
+  v1=$(curl -sSL "https://raw.githubusercontent.com/GM-VIP/BOT/main/Vercion")
   echo "$v1" > /etc/ADM-db/vercion
-  echo "@GENKEY_BOT" > ${CIDdir}/resell
+  echo "@JS_Developer_PY" > ${CIDdir}/resell
   
   }
 }
@@ -392,7 +392,7 @@ case $opcion in
 4) ini_res;;
 5) msj_prueba;;
 6) ayuda_fun;;
-7) source <(curl -sSL https://raw.githubusercontent.com/ELITE-MUNDIAL/BOT/main/bot-permited.sh) ;;
+7) source <(curl -sSL https://raw.githubusercontent.com/GM-VIP/BOT/main/bot-permited.sh) ;;
 8) act-bot ;;
 9) lim-bot ;;
 11) msj_ind ;;
