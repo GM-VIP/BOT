@@ -1,0 +1,60 @@
+#!/bin/bash
+
+ayuda_src () {
+bot_retorno="  🤖Bienvenido  $message_from_first_name $message_from_last_name  al BOT GEN-KEY.\n"
+	 if [[ $(echo $permited|grep "${chatuser}") = "" ]]; then
+		 if [[ $(cat ${CID}|grep "${chatuser}") = "" ]]; then
+			 bot_retorno+="  \n" 
+                         bot_retorno+="/ID\n Muestra su ID \n Para tener acceso al BOTGEN\n realize su pago $(cat < /etc/ADM-db/resell)\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/Keygen\n genera una key para\n el instalador del script\n para tener acceso\n deve enviar su ID al admin $(cat < /etc/ADM-db/resell)\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/menu\n muestra el menu\n de comandos disponibles\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/ayuda\n muestra este menu de ayuda\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/donar\n ayuda Voluntaria\n"
+			 bot_retorno+="$LINE\n"
+		 else
+			 bot_retorno+="/ID\n muestra sus ID de telegram\n para tener acceso al BOTGEN\n debe enviar su ID al admin $(cat < /etc/ADM-db/resell)\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/Keygen\n genera una key para\n el instalador del script\n para tener acceso\n deve enviar su ID al admin $(cat < /etc/ADM-db/resell)\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/instal\n muestra el link de instalacion\n del script para usar sus key\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/menu\n muestra el menu\n de comandos disponibles\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/ayuda\n muestra este menu de ayuda\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/donar\n ayuda Voluntaria\n"
+			 bot_retorno+="$LINE\n"
+		 fi
+	 else
+		 bot_retorno+="$LINE\n" 
+                 bot_retorno+="/Infosys \n Muestra información del sistema : ram, cpu, fecha y hora.\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/ID \n Muestra su ID de telegram para tener acceso al /Keygen.\n Debe enviar su ID al admin $(cat < /etc/ADM-db/resell) .\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Add \n Añade nuevo ID para dar acceso /keygen\n <u>modo de uso</u>\n /Add 123456789 \n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Del \n Elimina los ID , antes debes usar /list\n <u>modo de uso</u>\n /del 4\n /del 6\n etc.\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/List \n Muestra una lista de ID.\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Keygen \n Genera una key para el instalador del script\n para tener acceso deve enviar su ID al admin $(cat < /etc/ADM-db/resell) .\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Instal \n Muestra el link de instalación del script para usar sus key.\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Power \n Poner o sacar de linea el generador.\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Menu \n Muestra el menu de comandos disponibles.\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Ayuda \n Muestra este menu de ayuda.\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Cache \n Limpia el cache contenido en la ram.\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/Reboot\n APAGAR BOT.\n"
+		 bot_retorno+="$LINE\n"
+	 fi
+msj_fun
+}

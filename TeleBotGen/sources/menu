@@ -1,0 +1,78 @@
+#!/bin/bash
+[[ -e /etc/ADM-db/idioma_menuinst ]] && tr=$(cat < /etc/ADM-db/idioma_menuinst)
+text1=$(source trans -b pt:${tr} "MENU DE COMANDOS ")
+text2=$(source trans -b pt:${tr} "INSTRUCCIONES DE COMANDOS ")
+
+menu_src () {
+bot_retorno="$LINE\n"
+bot_retorno+="✦҈‌➳               ⚜️PANEL⚜️  \n"
+	 if [[ $(echo $permited|grep "${chatuser}") = "" ]]; then
+		 if [[ $(cat ${CID}|grep "${chatuser}") = "" ]]; then
+		 	 bot_retorno+="$LINE\n"
+			 bot_retorno+="👋hola ($message_from_first_name $message_from_last_name), Bienvenido al menu.\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="  ⚠️ TENDRAS ACCESO LIMITADO ⚠️ \n  🚫 Sin TU RESELLER EN LA KEY 🚫\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="Bienvenido @$message_from_username, tu ID no fue autorizado, realiza una donación.\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/ID    ✨ MUESTRA SU ID Y PEDIR ACCESO AL BOTGEN.\n"
+			 bot_retorno+="/menu  ✨ PANEL DE COMANDOS DISPONIBLES.\n"
+			 bot_retorno+="/ayuda ✨ INSTRUCCIONES DEL MENU.\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="Si tienes inconvenientes con el BotGEN \n Contactame : @GENKEY_BOT\n"
+			 bot_retorno+="$LINE\n"
+			 msj_fun
+		 else
+		 	[[ -e /etc/menu_ito ]] && nomkey="$(cat /etc/menu_ito)" || nomkey="$(curl -sSL "https://raw.githubusercontent.com/ADM-PERU/MGRBOT/main/TeleBotGen/Control/menu_credit")"
+		 	numkey_used=$(grep -o -i $message_chat_id /etc/gerar-sh-log | wc -l)
+			numkey_gen=$(grep -o -i $message_chat_id /etc/ADM-db/num-key.cont | wc -l)
+			data_user=$(cat ${CID}|grep "${chatuser}" | awk -F "|" '{print $2}')
+			data_sec=$(date +%s)
+			data_user_sec=$(date +%s --date="$data_user")
+			variavel_soma=$(($data_user_sec - $data_sec))
+			dias_use=$(($variavel_soma / 86400))
+			[[ "$dias_use" -le 0 ]] && dias_use=0 || dias_use=$(($dias_use + 1))
+			bot_retorno+="$LINE\n"
+			 bot_retorno+="💎 ACCESO ILIMITADO POR『 $dias_use 』DIAS 💎\n  👤 INCLUIDO TU RESELLER EN LA KEY.\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="Hola [$message_from_first_name $message_from_last_name], Bienvenido al menu\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="Reseller Actual: $(cat < /etc/ADM-db/resell)\n"
+			 bot_retorno+="$LINE\n"
+			 bot_retorno+="/ID     ✨  MUESTRA SU ID.\n"
+			 bot_retorno+="/instal ✨  LINK DE INSTALADOR OFICIAL.\n"
+			 bot_retorno+="/keygen ✨  GENERAR 1 KEY.\n"
+			 bot_retorno+="/menu   ✨  PANEL DE COMANDOS DISPONIBLES.\n"
+			 bot_retorno+="/ayuda  ✨  INSTRUCCIONES DEL MENU.\n"
+			 bot_retorno+="Si tienes inconvenientes con el Bot contactame  : @GENKEY_BOT 📲\n"
+			 bot_retorno+=" 🔐 『 $numkey_used 』Keys usadas ➖『 $numkey_gen 』Keys generadas🔑 \n"
+			 bot_retorno+="$LINE\n"
+			 menu_print
+		 fi
+		 
+	 else
+		 unset PID_GEN
+		 
+		 PID_GEN=$(ps x|grep -v grep|grep "http-server.sh")
+		 [[ ! $PID_GEN ]] && PID_GEN='(Offline) ❌' || PID_GEN='(Online) ✅'
+
+		 unset usadas
+		 usadas="$(cat /etc/http-instas)"
+		 [[ ! $usadas ]] && k_used="0" || k_used="$usadas"
+		 bot_retorno+="⚜️OWNER: @$message_from_username | $(printf '%(%D)T')\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="/infosys 🔹️ INFORMACION DEL SERVIDOR\n"
+		 bot_retorno+="/list   🔹️ MUESTRA LISTA DE ID PERMITIDOS\n"
+		 bot_retorno+="/instal 🔹️ INSTALADOR OFICIAL\n"
+		 bot_retorno+="/menu 🔹️ MENU DE ACCIONES\n"
+		 bot_retorno+="/ayuda 🔹️ INSTRUCCIONES DE COMANDOS\n"
+		 bot_retorno+="/cache 🔹️ OPTIMIZA SERVIDOR\n"
+		 bot_retorno+="/update 🔹️ ACTUALIZA BOT\n"
+		 bot_retorno+="/reboot 🔹️ REINICIA SERVIDOR VPS\n"
+		 bot_retorno+="/donar 🔹️ ACTIVA OPCION PARA DONAR\n"
+		 bot_retorno+="$LINE\n"
+		 bot_retorno+="Gen $PID_GEN | Keys Used [$k_used]\n"
+                 bot_retorno+="$LINE\n"
+		 menu_print
+	 fi	
+}

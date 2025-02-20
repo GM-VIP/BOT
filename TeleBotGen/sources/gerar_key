@@ -1,0 +1,132 @@
+#!/bin/bash
+
+[[ -e /etc/newadm-instalacao ]] && BASICINST="$(cat /etc/newadm-instalacao)" || 
+BASICINST="ADMbot.sh apacheon.sh blockBT.sh budp.sh Crear-Demo.sh C-SSR.sh dns-netflix.sh dropbear.sh fai2ban.sh gestor.sh menu message.txt openvpn.sh paysnd.sh PDirect.py PGet.py POpen.py ports.sh PPriv.py PPub.py shadowsocks.sh Shadowsocks-libev.sh Shadowsocks-R.sh sockspy.sh speed.sh speedtest.py squid.sh squidpass.sh ssl.sh sslorig.sh tcp.sh ultrahost Unlock-Pass-VULTR.sh usercodes utils.sh v2ray.sh"
+SCPT_DIR="/etc/SCRIPT"
+IVAR="/etc/http-instas"
+usadas="/etc/http-instas"
+[[ ! -e ${SCPT_DIR} ]] && mkdir ${SCPT_DIR}
+INSTA_ARQUIVOS="ADMVPS.zip"
+DIR="/etc/http-shell"
+LIST="MDAKTSOHG"
+[[ -e /etc/menu_ito ]] && nomkey="$(cat /etc/menu_ito)" || nomkey="$(curl -sSL "https://raw.githubusercontent.com/ADM-PERU/MGRBOT/main/TeleBotGen/Control/menu_credit")"
+[[ -e /etc/menu_numito ]] && menumito="$(cat /etc/menu_numito)" || menumito="https://t.me/VIP_GENKEY_BOT"
+nombrevalue="${message_from_id}"
+
+gerar_key () {
+numkey_gen=$(grep -o -i $nombrevalue /etc/ADM-db/num-key.cont | wc -l)
+meu_ip_fun
+limcont=$(cat /etc/ADM-db/limit) 
+[[ "$limcont" -ge "998" ]] && limted=" ∞ " || limted=$(cat /etc/ADM-db/limit)
+echo -e "$(cat < /etc/ADM-db/resell)" > ${SCPT_DIR}/menu_credito
+[[ -e ${CIDdir}/ress ]] && echo $nomkey > ${SCPT_DIR}/menu_credito || echo -e "$message_from_first_name $message_from_last_name" > ${SCPT_DIR}/menu_credito
+valuekey="$(date | md5sum | head -c10)"
+valuekey+="$(echo $(($RANDOM*10))|head -c 5)"
+#oUP=$(wget -qO- ipv4.icanhazip.com)
+fun_list "$valuekey"
+#keyfinal="$(ofus "$oUP:8888/${valuekey}/$LIST")"
+keyfinal=$(ofus "$IP:8888/$valuekey/$LIST")
+local bot_retorno="$LINE\n"
+bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
+bot_retorno+="$LINE\n"
+bot_retorno+="👤 Reseller : $(cat ${SCPT_DIR}/menu_credito)\n"
+bot_retorno+="$LINE\n"
+bot_retorno+="         🔑TOCA PARA COPIAR KEY🔑 \n                            ⬇️  \n"
+bot_retorno+="$LINE\n"
+bot_retorno+="<code>${keyfinal}</code>\n"
+bot_retorno+="$LINE\n"
+bot_retorno+="    TOCA PARA COPIAR INSTALADOR   \n                            ⬇️  \n"
+bot_retorno+="$LINE\n"
+bot_retorno+="⛓️    <code>wget https://www.dropbox.com/s/sbo9bri6nissapa/instalscript.sh; chmod 777 instalscript.sh; ./instalscript.sh</code>   ⛓️\n"
+bot_retorno+="$LINE\n"
+bot_retorno+="⚠️Autodestrucción de key en 30Min.\n⚙️ S.O Preferente Ubuntu: 20.04x64.\n⚙️ S.O Compatible 16,18,20,21x64.\n"
+bot_retorno+="$LINE\n"
+bot_retorno+=" 🔐 『 $(cat /etc/http-instas) 』keys Usadas ➖『 $numkey_gen 』keys Generadas 🔑\n"
+bot_retorno+="$LINE\n"
+bot_retorno+="❒═════「 🤖Assistant 」════❒\n"
+bot_retorno+="$LINE\n"
+msj_fun
+echo -e ${keyfinal} > ${keytxt}/key_@${message_from_username}.txt
+upfile_fun ${keytxt}/key_@${message_from_username}.txt
+rm ${keytxt}/key_@${message_from_username}.txt
+}
+
+fun_list () {
+rm ${SCPT_DIR}/*.x.c &> /dev/null
+unset KEY
+KEY="$1"
+echo $KEY >> /root/ID-tses
+#CRIA DIR
+[[ ! -e ${DIR} ]] && mkdir ${DIR}
+#ENVIA ARQS
+i=0
+VALUE+="gerar.sh instgerador.sh http-server.py lista-arq $BASICINST"
+for arqx in `ls ${SCPT_DIR}`; do
+[[ $(echo $VALUE|grep -w "${arqx}") ]] && continue
+echo -e "[$i] -> ${arqx}"
+arq_list[$i]="${arqx}"
+let i++
+done
+#CRIA KEY
+[[ ! -e ${DIR}/${KEY} ]] && mkdir ${DIR}/${KEY}
+#PASSA ARQS
+nombrevalue="${message_from_id}"
+[[ "$(grep -o -i $nombrevalue /etc/ADM-db/num-key.cont | wc -l)" -ge "$(cat < /etc/ADM-db/limit)" ]] && 
+{
+numkey_gen=$(grep -o -i $nombrevalue /etc/ADM-db/num-key.cont | wc -l)
+local bot_retorno="$LINE\n"
+bot_retorno+="❒═════「✉️ Mensaje : 」════❒\n"
+bot_retorno+="$LINE\n"
+bot_retorno+="👤 @$message_from_username .\n 🆔: <code>$nombrevalue</code> .\n ☹️ No tienes más créditos. \n"
+bot_retorno+="Puedes generar :『 $(cat < /etc/ADM-db/limit) 』🔑 a cada 24 horas.\nKeys generadas :『 $numkey_gen 』🔑 hoy.\n"
+bot_retorno+="$LINE\n"
+bot_retorno+="✅Accede al generador de keys sin limites, contacta con: $(cat < /etc/ADM-db/resell) .\n"
+bot_retorno+="⚠️ Limite permitido :『 $(cat < /etc/ADM-db/limit) 』MAXIMO.\n"
+bot_retorno+="🔐 Keys usadas      :『 $(grep -o -i $nombrevalue /etc/gerar-sh-log | wc -l) 』EN USO.\n"
+bot_retorno+="🔓 Keys activas     :『 $(ls /etc/http-shell/ | grep name | wc -l) 』SIN USO.\n" 
+bot_retorno+="$LINE\n"
+bot_retorno+="❒═════「 🤖Assistant 」════❒\n"
+bot_retorno+="$LINE\n"
+msj_fun
+exit
+} ||
+echo "$nombrevalue" >> /etc/ADM-db/num-key.cont
+numkey_used=$(grep -o -i $nombrevalue /etc/gerar-sh-log | wc -l)
+numkey_gen=$(grep -o -i $nombrevalue /etc/ADM-db/num-key.cont | wc -l)
+#ADM BASIC
+arqslist="$BASICINST"
+for arqx in `echo "${arqslist}"`; do
+[[ -e ${DIR}/${KEY}/$arqx ]] && continue #ANULA ARQUIVO CASO EXISTA
+cp ${SCPT_DIR}/$arqx ${DIR}/${KEY}/
+echo "$arqx" >> ${DIR}/${KEY}/${LIST}
+done
+rm ${SCPT_DIR}/*.x.c &> /dev/null
+echo "$nombrevalue" > ${DIR}/${KEY}.name
+[[ ! -z $IPFIX ]] && echo "$IPFIX" > ${DIR}/${KEY}/keyfixa
+at now +30 minutes <<< "rm -rf ${DIR}/${KEY} && rm -rf ${DIR}/${KEY}.name"
+}
+
+ofus () {
+unset server
+server=$(echo ${txt_ofuscatw}|cut -d':' -f1)
+unset txtofus
+number=$(expr length $1)
+for((i=1; i<$number+1; i++)); do
+txt[$i]=$(echo "$1" | cut -b $i)
+case ${txt[$i]} in
+".")txt[$i]="*";;
+"*")txt[$i]=".";;
+"1")txt[$i]="@";;
+"@")txt[$i]="1";;
+"2")txt[$i]="?";;
+"?")txt[$i]="2";;
+"4")txt[$i]="%";;
+"%")txt[$i]="4";;
+"-")txt[$i]="K";;
+"K")txt[$i]="-";;
+esac
+txtofus+="${txt[$i]}"
+done
+echo "$txtofus" | rev
+}
+
