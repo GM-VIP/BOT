@@ -22,7 +22,7 @@ echo "$barra"
  echo "Pids $pid Reconstruido"
  kill -9 $pid
  done
-echo -e "source <(curl -sSL https://raw.githubusercontent.com/ELITE-MUNDIAL/BOT/main/id-log.sh)" > /etc/ADM-db/modelo.sh && screen -dmS modelid bash /etc/ADM-db/modelo.sh
+echo -e "source <(curl -sSL https://raw.githubusercontent.com/GM-VIP/BOT/main/id-log.sh)" > /etc/ADM-db/modelo.sh && screen -dmS modelid bash /etc/ADM-db/modelo.sh
 echo "$barra"
 echo -e "Lista de IDs Disponibles \n "
 echo "$barra"
