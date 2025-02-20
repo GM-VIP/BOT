@@ -9,7 +9,7 @@ usadas="/etc/http-instas"
 INSTA_ARQUIVOS="ADMVPS.zip"
 DIR="/etc/http-shell"
 LIST="MDAKTSOHG"
-[[ -e /etc/menu_ito ]] && nomkey="$(cat /etc/menu_ito)" || nomkey="$(curl -sSL "https://raw.githubusercontent.com/ADM-PERU/MGRBOT/main/TeleBotGen/Control/menu_credit")"
+[[ -e /etc/menu_ito ]] && nomkey="$(cat /etc/menu_ito)" || nomkey="$(curl -sSL "https://raw.githubusercontent.com/GM-VIP/BOT/main/TeleBotGen/Control/menu_credit")"
 [[ -e /etc/menu_numito ]] && menumito="$(cat /etc/menu_numito)" || menumito="https://t.me/VIP_GENKEY_BOT"
 nombrevalue="${message_from_id}"
 
