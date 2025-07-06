@@ -205,16 +205,15 @@ BOT_ANTIGUO
 # Ejecutando escucha del bot
 while true; do
     ShellBot.getUpdates --limit 100 --offset $(ShellBot.OffsetNext) --timeout 30
-
     for id in $(ShellBot.ListUpdates); do
+
         chat_id="${message_chat_id[$id]}"
-        [[ "$chat_id" == -* ]] && continue  # Ignora grupos (IDs negativos)
+        chatuser="${message_from_id[$id]}"
 
-        chatuser="$chat_id"
-        echo "$chatuser" >&2
+        echo $chatuser >&2
 
-        # ✅ Registrar o actualizar base de datos VIP (solo usuarios)
-        vip_autoregistro
+        # ✅ Registrar solo si es mensaje normal (no callback)
+        [[ "${message_from_id[$id]}" ]] && vip_autoregistro
 
         # 🔒 Saltar si está bloqueado
         [[ -e /etc/ADM-db/bloqueados.txt ]] && grep -q "^$chatuser$" /etc/ADM-db/bloqueados.txt && continue
