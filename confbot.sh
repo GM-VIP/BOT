@@ -45,7 +45,8 @@ echo -e "verificando..."
 check_ip
 function_verify
 
-: lim-bot () {
+: <<'LIMITE_ANTIGUO'
+ lim-bot () {
 unset option
 clear
 echo -e "$bar"
@@ -96,7 +97,59 @@ fi
 read -p "Presione Enter para continuar "
 bot_gen
 }
+LIMITE_ANTIGUO
 
+lim-bot () {
+  unset option
+  clear
+  echo -e "$bar"
+  echo -e "  \033[1;37mIngrese el Limite del Bot"
+  echo -e "$bar"
+  echo -n "Limite: "
+  read opcion
+  echo "$opcion" > ${CIDdir}/limit
+  echo "$opcion" > /etc/limit
+  unset PIDGEN
+  PIDGEN=$(ps aux | grep -v grep | grep "kill_drop.sh")
+  if [[ ! $PIDGEN ]]; then
+    echo -e "$bar"
+    echo -ne "\033[1;97m Poner en linea KILL ID [s/n]: "
+    read bot_ini
+    echo -e "$bar"
+    [[ $bot_ini = @(s|S|y|Y) ]] && {
+      echo -e "[Unit]
+Description=Limit Control System for Telegram Services
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/bin/bash /etc/ADM-db/sources/kill_drop.sh
+Restart=always
+RestartSec=60s
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/btkill.service
+
+      systemctl enable btkill &>/dev/null
+      systemctl start btkill &>/dev/null
+      echo -e "$bar"
+      echo -e "\033[1;31m            Bot ID KILL ACTIVADO"
+      echo -e "$bar"
+    }
+  else
+    killall kill_drop.sh &>/dev/null
+    systemctl stop btkill &>/dev/null
+    systemctl disable btkill &>/dev/null
+    rm /etc/systemd/system/btkill.service &>/dev/null
+    clear
+    echo -e "$bar"
+    echo -e "\033[1;31m            Bot ID KILL fuera de linea"
+    echo -e "$bar"
+  fi
+  read -p "Presione Enter para continuar "
+  bot_gen
+}
 
 veryfy_fun () {
 SRC="/etc/ADM-db/sources" && [[ ! -d ${SRC} ]] && mkdir ${SRC}
