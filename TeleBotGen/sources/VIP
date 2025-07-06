@@ -2,7 +2,7 @@
 
 test_fun () {
   bot_retorno="$LINE\n"
-  bot_retorno+="Holla.\n"
+  bot_retorno+="Hola test.\n"
   bot_retorno+="$LINE\n"
   msj_fun
 }
