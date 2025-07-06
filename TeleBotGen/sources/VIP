@@ -1,22 +1,49 @@
 #!/bin/bash
 
-# Ruta del archivo donde guardarás la "database" de IDs
 vipdb="/etc/ADM-db/VIP-database.json"
+grupo_log="-1001475120970"
 
-# Función que guarda automáticamente el ID si no está registrado
 vip_autoregistro () {
     [[ ! -e $vipdb ]] && echo "[]" > "$vipdb"
 
-    # Crear entrada en formato JSON
+    # Buscar si ya existe el usuario
+    existente=$(jq -r ".[] | select(.id == \"$chatuser\")" "$vipdb")
+
+    # Preparar nueva entrada
     nuevo=$(jq -n --arg id "$chatuser" \
-                  --arg nombre "$message_from_first_name" \
-                  --arg usuario "$message_from_username" \
-                  --arg fecha "$(date '+%Y-%m-%d')" \
-                  '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha}')
+                   --arg nombre "$message_from_first_name" \
+                   --arg usuario "$message_from_username" \
+                   --arg fecha "$(date '+%Y-%m-%d')" \
+                   '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha}')
 
-    # Eliminar existente si ya está
-    json=$(jq "del(.[] | select(.id == \"$chatuser\"))" "$vipdb")
+    if [[ -z "$existente" ]]; then
+        # 📌 NUEVO USUARIO
+        json=$(jq ". += [$nuevo]" "$vipdb")
+        echo "$json" > "$vipdb"
 
-    # Añadir el nuevo o actualizado
-    echo "$json" | jq ". += [$nuevo]" > "$vipdb"
+        notificacion="📥 <b>Nuevo usuario VIP registrado</b>\n\n🆔 ID: <code>$chatuser</code>\n👤 Nombre: <b>$message_from_first_name</b>\n🔰 Usuario: @$message_from_username\n📅 Fecha: $(date '+%Y-%m-%d')"
+
+    else
+        # 📌 USUARIO EXISTENTE: verificar cambios
+        nombre_viejo=$(echo "$existente" | jq -r '.nombre')
+        usuario_viejo=$(echo "$existente" | jq -r '.usuario')
+
+        cambios=""
+        [[ "$nombre_viejo" != "$message_from_first_name" ]] && cambios+="📝 <b>Nombre actualizado:</b>\nDe: <code>$nombre_viejo</code>\nA: <code>$message_from_first_name</code>\n\n"
+        [[ "$usuario_viejo" != "$message_from_username" ]] && cambios+="🔄 <b>Usuario actualizado:</b>\nDe: @$usuario_viejo\nA: @$message_from_username\n\n"
+
+        if [[ -n "$cambios" ]]; then
+            json=$(jq "del(.[] | select(.id == \"$chatuser\"))" "$vipdb")
+            echo "$json" | jq ". += [$nuevo]" > "$vipdb"
+
+            notificacion="🔧 <b>Usuario VIP actualizado</b>\n🆔 ID: <code>$chatuser</code>\n\n$cambios📅 Fecha: $(date '+%Y-%m-%d')"
+        fi
+    fi
+
+    # Enviar notificación si hubo algo nuevo o modificado
+    if [[ -n "$notificacion" ]]; then
+        ShellBot.sendMessage --chat_id "$grupo_log" \
+                             --text "$notificacion" \
+                             --parse_mode html
+    fi
 }
