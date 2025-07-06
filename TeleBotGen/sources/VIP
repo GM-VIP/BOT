@@ -10,8 +10,8 @@ vip_autoregistro () {
     [[ ! -e $log ]] && touch $log
 
     # Datos nuevos
-    nuevo_nombre="$message_from_first_name"
-    nuevo_usuario="$message_from_username"
+    nuevo_nombre="${message_from_first_name:-callback}"
+    nuevo_usuario="${message_from_username:-callback}"
     nuevo_fecha="$(date '+%Y-%m-%d')"
 
     # Buscar si el ID ya existe
