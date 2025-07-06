@@ -184,6 +184,7 @@ while true; do
 	    chatuser="$(echo ${message_chat_id[$id]}|cut -d'-' -f2)"
 	    [[ -z $chatuser ]] && chatuser="$(echo ${callback_query_from_id[$id]}|cut -d'-' -f2)"
 	    echo $chatuser >&2
+            vip_autoregistro  # ← Esto guarda el ID automáticamente apenas el usuario escriba algo.
 	    #echo "user id $chatuser"
 
 	    comando=(${message_text[$id]})
