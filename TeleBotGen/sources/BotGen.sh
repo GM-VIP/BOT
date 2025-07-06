@@ -229,4 +229,5 @@ for id in $(ShellBot.ListUpdates); do
 
     comand
 done
+done
 
