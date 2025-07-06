@@ -205,20 +205,20 @@ BOT_ANTIGUO
 # Ejecutando escucha del bot
 while true; do
     ShellBot.getUpdates --limit 100 --offset $(ShellBot.OffsetNext) --timeout 30
+
     for id in $(ShellBot.ListUpdates); do
 
-        chat_id="${message_chat_id[$id]}"
+        # Obtener ID del usuario ya sea por mensaje o callback
         chatuser="${message_from_id[$id]}"
+        [[ -z "$chatuser" ]] && chatuser="${callback_query_from_id[$id]}"
 
-        echo $chatuser >&2
-
-        # ✅ Registrar solo si es mensaje normal (no callback)
+        # ✅ Registrar base de datos (solo si es mensaje escrito)
         [[ "${message_from_id[$id]}" ]] && vip_autoregistro
-
-        # 🔒 Saltar si está bloqueado
+	
+        # 🔒 Saltar si está bloqueado (aplica tanto a mensaje como callback)
         [[ -e /etc/ADM-db/bloqueados.txt ]] && grep -q "^$chatuser$" /etc/ADM-db/bloqueados.txt && continue
 
-        # ✅ Procesar comandos
+        # Procesar comandos (mensaje o callback)
         comando=(${message_text[$id]})
         [[ -z $comando ]] && comando=(${callback_query_data[$id]})
 
