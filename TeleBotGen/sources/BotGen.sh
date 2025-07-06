@@ -54,6 +54,7 @@ source ${SRC}/listID
 source ${SRC}/gerar_key
 source ${SRC}/power
 source ${SRC}/VIP
+source ${SRC}/Block
 source ${SRC}/comandos
 source ${SRC}/update
 source ${SRC}/donar
