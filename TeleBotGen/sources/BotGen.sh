@@ -177,6 +177,8 @@ ShellBot.InlineKeyboardButton --button 'botao_user' --line 2 --text ' Contacto �
 ShellBot.InlineKeyboardButton --button 'botao_donar' --line 2 --text 'Donar Paypal' --callback_data '1' --url 'https://paypal.me/BOTGEN?locale.x=es_XC '
 ShellBot.InlineKeyboardButton --button 'botao_donar' --line 2 --text 'ACCEDER TELEGRAM' --callback_data '1' --url 'https://t.me/GENKEY_BOT'
 
+: <<'BOT_ANTIGUO'
+
 # Ejecutando escucha del bot
 while true; do
     ShellBot.getUpdates --limit 100 --offset $(ShellBot.OffsetNext) --timeout 30
@@ -198,4 +200,33 @@ while true; do
     done
 done
 							
-	    
+BOT_ANTIGUO
+
+# Ejecutando escucha del bot
+while true; do
+    ShellBot.getUpdates --limit 100 --offset $(ShellBot.OffsetNext) --timeout 30
+for id in $(ShellBot.ListUpdates); do
+
+    chatuser="$(echo ${message_chat_id[$id]} | cut -d'-' -f2)"
+    [[ -z $chatuser ]] && chatuser="$(echo ${callback_query_from_id[$id]} | cut -d'-' -f2)"
+    echo $chatuser >&2
+
+    # ✅ Registrar o actualizar base de datos VIP SIEMPRE
+    vip_autoregistro
+
+    # 🔒 Saltar si es un grupo
+    [[ "$chatuser" == -* ]] && continue
+
+    # 🔒 Saltar si está bloqueado
+    [[ -e /etc/ADM-db/bloqueados.txt ]] && grep -q "^$chatuser$" /etc/ADM-db/bloqueados.txt && continue
+
+    # ✅ Procesar comandos
+    comando=(${message_text[$id]})
+    [[ -z $comando ]] && comando=(${callback_query_data[$id]})
+
+    [[ ! -e "${CIDdir}/Admin-ID" ]] && echo "null" > ${CIDdir}/Admin-ID
+    permited=$(cat ${CIDdir}/Admin-ID)
+
+    comand
+done
+
