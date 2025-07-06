@@ -205,29 +205,27 @@ BOT_ANTIGUO
 # Ejecutando escucha del bot
 while true; do
     ShellBot.getUpdates --limit 100 --offset $(ShellBot.OffsetNext) --timeout 30
-for id in $(ShellBot.ListUpdates); do
 
-    chatuser="$(echo ${message_chat_id[$id]} | cut -d'-' -f2)"
-    [[ -z $chatuser ]] && chatuser="$(echo ${callback_query_from_id[$id]} | cut -d'-' -f2)"
-    echo $chatuser >&2
+    for id in $(ShellBot.ListUpdates); do
+        chat_id="${message_chat_id[$id]}"
+        [[ "$chat_id" == -* ]] && continue  # Ignora grupos (IDs negativos)
 
-    # ✅ Registrar o actualizar base de datos VIP SIEMPRE
-    vip_autoregistro
+        chatuser="$chat_id"
+        echo "$chatuser" >&2
 
-    # 🔒 Saltar si es un grupo
-    [[ "$chatuser" == -* ]] && continue
+        # ✅ Registrar o actualizar base de datos VIP (solo usuarios)
+        vip_autoregistro
 
-    # 🔒 Saltar si está bloqueado
-    [[ -e /etc/ADM-db/bloqueados.txt ]] && grep -q "^$chatuser$" /etc/ADM-db/bloqueados.txt && continue
+        # 🔒 Saltar si está bloqueado
+        [[ -e /etc/ADM-db/bloqueados.txt ]] && grep -q "^$chatuser$" /etc/ADM-db/bloqueados.txt && continue
 
-    # ✅ Procesar comandos
-    comando=(${message_text[$id]})
-    [[ -z $comando ]] && comando=(${callback_query_data[$id]})
+        # ✅ Procesar comandos
+        comando=(${message_text[$id]})
+        [[ -z $comando ]] && comando=(${callback_query_data[$id]})
 
-    [[ ! -e "${CIDdir}/Admin-ID" ]] && echo "null" > ${CIDdir}/Admin-ID
-    permited=$(cat ${CIDdir}/Admin-ID)
+        [[ ! -e "${CIDdir}/Admin-ID" ]] && echo "null" > "${CIDdir}/Admin-ID"
+        permited=$(cat "${CIDdir}/Admin-ID")
 
-    comand
+        comand
+    done
 done
-done
-
