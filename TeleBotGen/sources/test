@@ -2,7 +2,7 @@
 
 test_fun () {
   bot_retorno="$LINE\n"
-  bot_retorno+="🧪 Hola @$message_from_username, este es el comando de prueba exclusivo.\n"
+  bot_retorno+="Hola.\n"
   bot_retorno+="$LINE\n"
   msj_fun
 }
