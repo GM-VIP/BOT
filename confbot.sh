@@ -45,7 +45,7 @@ echo -e "verificando..."
 check_ip
 function_verify
 
-# lim-bot () {
+: lim-bot () {
 unset option
 clear
 echo -e "$bar"
@@ -97,8 +97,6 @@ read -p "Presione Enter para continuar "
 bot_gen
 }
 
-#
-//* test
 
 veryfy_fun () {
 SRC="/etc/ADM-db/sources" && [[ ! -d ${SRC} ]] && mkdir ${SRC}
