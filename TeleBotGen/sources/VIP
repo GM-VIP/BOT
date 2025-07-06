@@ -1,8 +1,14 @@
 #!/bin/bash
 
-test_fun () {
-  bot_retorno="$LINE\n"
-  bot_retorno+="Hola test.\n"
-  bot_retorno+="$LINE\n"
-  msj_fun
+# Ruta del archivo donde guardarás la "database" de IDs
+vipdb="/etc/ADM-db/VIP-database"
+
+# Función que guarda automáticamente el ID si no está registrado
+vip_autoregistro () {
+    [[ ! -e $vipdb ]] && touch $vipdb
+
+    # Verifica si el ID ya está guardado
+    if [[ $(grep -c "^$chatuser" "$vipdb") -eq 0 ]]; then
+        echo "$chatuser|$message_from_first_name|$message_from_username|$(date '+%Y-%m-%d')" >> "$vipdb"
+    fi
 }
