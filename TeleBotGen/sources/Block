@@ -1,0 +1,56 @@
+#!/bin/bash
+
+bloqfile="/etc/ADM-db/bloqueados.txt"
+[[ ! -e $bloqfile ]] && touch $bloqfile
+
+block_fun () {
+    id_input=$(echo "${comando[1]}" | sed 's/@//g')
+
+    if [[ -z $id_input ]]; then
+        bot_retorno="⚠️ Debes ingresar un ID o @usuario\nUso: /block 123456789 o /block @usuario"
+        msj_fun
+        return
+    fi
+
+    id_bloq=$(jq -r ".[] | select(.usuario==\"$id_input\" or .id==\"$id_input\") | .id" /etc/ADM-db/VIP-database.json)
+
+    if [[ -z $id_bloq ]]; then
+        bot_retorno="❌ Usuario no encontrado en la base VIP."
+        msj_fun
+        return
+    fi
+
+    if grep -q "^$id_bloq$" "$bloqfile"; then
+        bot_retorno="⚠️ Este usuario ya estaba bloqueado."
+    else
+        echo "$id_bloq" >> "$bloqfile"
+        bot_retorno="✋ Usuario bloqueado exitosamente.\nID: $id_bloq"
+    fi
+    msj_fun
+}
+
+unblock_fun () {
+    id_input=$(echo "${comando[1]}" | sed 's/@//g')
+
+    if [[ -z $id_input ]]; then
+        bot_retorno="⚠️ Debes ingresar un ID o @usuario\nUso: /unblock 123456789 o /unblock @usuario"
+        msj_fun
+        return
+    fi
+
+    id_unbloq=$(jq -r ".[] | select(.usuario==\"$id_input\" or .id==\"$id_input\") | .id" /etc/ADM-db/VIP-database.json)
+
+    if [[ -z $id_unbloq ]]; then
+        bot_retorno="❌ Usuario no encontrado en la base VIP."
+        msj_fun
+        return
+    fi
+
+    if grep -q "^$id_unbloq$" "$bloqfile"; then
+        sed -i "/^$id_unbloq$/d" "$bloqfile"
+        bot_retorno="✅ Usuario desbloqueado.\nID: $id_unbloq"
+    else
+        bot_retorno="⚠️ El usuario no estaba bloqueado."
+    fi
+    msj_fun
+}
