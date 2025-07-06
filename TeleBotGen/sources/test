@@ -1,3 +1,5 @@
+#!/bin/bash
+
 test_fun () {
   bot_retorno="$LINE\n"
   bot_retorno+="🧪 Hola @$message_from_username, este es el comando de prueba exclusivo.\n"
