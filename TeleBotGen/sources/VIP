@@ -1,49 +1,65 @@
 #!/bin/bash
 
 vipdb="/etc/ADM-db/VIP-database.json"
-grupo_log="-1001475120970"
+log="/etc/ADM-db/VIP-registrados.log"
+grupo_admin="-1001475120970"
 
 vip_autoregistro () {
+    [[ "$chatuser" == -* ]] && return 0  # Ignora grupos (IDs negativos)
     [[ ! -e $vipdb ]] && echo "[]" > "$vipdb"
+    [[ ! -e $log ]] && touch $log
 
-    # Buscar si ya existe el usuario
-    existente=$(jq -r ".[] | select(.id == \"$chatuser\")" "$vipdb")
+    # Datos nuevos
+    nuevo_nombre="$message_from_first_name"
+    nuevo_usuario="$message_from_username"
+    nuevo_fecha="$(date '+%Y-%m-%d')"
 
-    # Preparar nueva entrada
-    nuevo=$(jq -n --arg id "$chatuser" \
-                   --arg nombre "$message_from_first_name" \
-                   --arg usuario "$message_from_username" \
-                   --arg fecha "$(date '+%Y-%m-%d')" \
-                   '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha}')
+    # Buscar si el ID ya existe
+    existe=$(jq -r --arg id "$chatuser" '.[] | select(.id == $id)' "$vipdb")
 
-    if [[ -z "$existente" ]]; then
-        # 📌 NUEVO USUARIO
+    if [[ -z "$existe" ]]; then
+        # Nuevo registro
+        nuevo=$(jq -n --arg id "$chatuser" \
+                      --arg nombre "$nuevo_nombre" \
+                      --arg usuario "$nuevo_usuario" \
+                      --arg fecha "$nuevo_fecha" \
+                      '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha}')
         json=$(jq ". += [$nuevo]" "$vipdb")
         echo "$json" > "$vipdb"
 
-        notificacion="📥 <b>Nuevo usuario VIP registrado</b>\n\n🆔 ID: <code>$chatuser</code>\n👤 Nombre: <b>$message_from_first_name</b>\n🔰 Usuario: @$message_from_username\n📅 Fecha: $(date '+%Y-%m-%d')"
+        # Registrar que ya se notificó
+        echo "$chatuser" >> "$log"
+
+        # Notificar nuevo usuario
+        texto="📥 <b>Nuevo usuario registrado</b>\n"
+        texto+="🆔 ID: <code>$chatuser</code>\n"
+        texto+="👤 Nombre: $nuevo_nombre\n"
+        texto+="🔗 Usuario: @$nuevo_usuario\n"
+        texto+="📆 Fecha: $nuevo_fecha"
+        ShellBot.sendMessage --chat_id "$grupo_admin" --text "$texto" --parse_mode html
 
     else
-        # 📌 USUARIO EXISTENTE: verificar cambios
-        nombre_viejo=$(echo "$existente" | jq -r '.nombre')
-        usuario_viejo=$(echo "$existente" | jq -r '.usuario')
+        # Comprobar si hubo cambios (nombre o usuario)
+        nombre_antiguo=$(jq -r --arg id "$chatuser" '.[] | select(.id == $id) | .nombre' "$vipdb")
+        usuario_antiguo=$(jq -r --arg id "$chatuser" '.[] | select(.id == $id) | .usuario' "$vipdb")
 
-        cambios=""
-        [[ "$nombre_viejo" != "$message_from_first_name" ]] && cambios+="📝 <b>Nombre actualizado:</b>\nDe: <code>$nombre_viejo</code>\nA: <code>$message_from_first_name</code>\n\n"
-        [[ "$usuario_viejo" != "$message_from_username" ]] && cambios+="🔄 <b>Usuario actualizado:</b>\nDe: @$usuario_viejo\nA: @$message_from_username\n\n"
-
-        if [[ -n "$cambios" ]]; then
+        if [[ "$nombre_antiguo" != "$nuevo_nombre" || "$usuario_antiguo" != "$nuevo_usuario" ]]; then
+            # Actualizar el registro
+            nuevo=$(jq -n --arg id "$chatuser" \
+                          --arg nombre "$nuevo_nombre" \
+                          --arg usuario "$nuevo_usuario" \
+                          --arg fecha "$nuevo_fecha" \
+                          '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha}')
             json=$(jq "del(.[] | select(.id == \"$chatuser\"))" "$vipdb")
             echo "$json" | jq ". += [$nuevo]" > "$vipdb"
 
-            notificacion="🔧 <b>Usuario VIP actualizado</b>\n🆔 ID: <code>$chatuser</code>\n\n$cambios📅 Fecha: $(date '+%Y-%m-%d')"
+            # Notificar actualización
+            texto="♻️ <b>Usuario actualizado</b>\n"
+            texto+="🆔 ID: <code>$chatuser</code>\n"
+            texto+="👤 Antes: $nombre_antiguo | @$usuario_antiguo\n"
+            texto+="👤 Ahora: $nuevo_nombre | @$nuevo_usuario\n"
+            texto+="📆 Fecha: $nuevo_fecha"
+            ShellBot.sendMessage --chat_id "$grupo_admin" --text "$texto" --parse_mode html
         fi
-    fi
-
-    # Enviar notificación si hubo algo nuevo o modificado
-    if [[ -n "$notificacion" ]]; then
-        ShellBot.sendMessage --chat_id "$grupo_log" \
-                             --text "$notificacion" \
-                             --parse_mode html
     fi
 }
