@@ -1,14 +1,22 @@
 #!/bin/bash
 
 # Ruta del archivo donde guardarás la "database" de IDs
-vipdb="/etc/ADM-db/VIP-database"
+vipdb="/etc/ADM-db/VIP-database.json"
 
 # Función que guarda automáticamente el ID si no está registrado
 vip_autoregistro () {
-    [[ ! -e $vipdb ]] && touch $vipdb
+    [[ ! -e $vipdb ]] && echo "[]" > "$vipdb"
 
-    # Verifica si el ID ya está guardado
-    if [[ $(grep -c "^$chatuser" "$vipdb") -eq 0 ]]; then
-        echo "$chatuser|$message_from_first_name|$message_from_username|$(date '+%Y-%m-%d')" >> "$vipdb"
-    fi
+    # Crear entrada en formato JSON
+    nuevo=$(jq -n --arg id "$chatuser" \
+                  --arg nombre "$message_from_first_name" \
+                  --arg usuario "$message_from_username" \
+                  --arg fecha "$(date '+%Y-%m-%d')" \
+                  '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha}')
+
+    # Eliminar existente si ya está
+    json=$(jq "del(.[] | select(.id == \"$chatuser\"))" "$vipdb")
+
+    # Añadir el nuevo o actualizado
+    echo "$json" | jq ". += [$nuevo]" > "$vipdb"
 }
