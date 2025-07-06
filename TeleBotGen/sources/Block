@@ -3,6 +3,8 @@
 bloqfile="/etc/ADM-db/bloqueados.txt"
 [[ ! -e $bloqfile ]] && touch $bloqfile
 
+grupo_admin="-1001475120970"  # Grupo donde se notifica
+
 block_fun () {
     id_input=$(echo "${comando[1]}" | sed 's/@//g')
 
@@ -13,6 +15,8 @@ block_fun () {
     fi
 
     id_bloq=$(jq -r ".[] | select(.usuario==\"$id_input\" or .id==\"$id_input\") | .id" /etc/ADM-db/VIP-database.json)
+    nombre_bloq=$(jq -r ".[] | select(.id==\"$id_bloq\") | .nombre" /etc/ADM-db/VIP-database.json)
+    usuario_bloq=$(jq -r ".[] | select(.id==\"$id_bloq\") | .usuario" /etc/ADM-db/VIP-database.json)
 
     if [[ -z $id_bloq ]]; then
         bot_retorno="❌ Usuario no encontrado en la base VIP."
@@ -25,7 +29,14 @@ block_fun () {
     else
         echo "$id_bloq" >> "$bloqfile"
         bot_retorno="✋ Usuario bloqueado exitosamente.\nID: $id_bloq"
+
+        texto="⛔️ <b>Usuario bloqueado</b>\n"
+        texto+="🆔 ID: <code>$id_bloq</code>\n"
+        texto+="👤 Nombre: $nombre_bloq\n"
+        texto+="🔗 Usuario: @$usuario_bloq"
+        ShellBot.sendMessage --chat_id "$grupo_admin" --text "$texto" --parse_mode html
     fi
+
     msj_fun
 }
 
@@ -39,6 +50,8 @@ unblock_fun () {
     fi
 
     id_unbloq=$(jq -r ".[] | select(.usuario==\"$id_input\" or .id==\"$id_input\") | .id" /etc/ADM-db/VIP-database.json)
+    nombre_unbloq=$(jq -r ".[] | select(.id==\"$id_unbloq\") | .nombre" /etc/ADM-db/VIP-database.json)
+    usuario_unbloq=$(jq -r ".[] | select(.id==\"$id_unbloq\") | .usuario" /etc/ADM-db/VIP-database.json)
 
     if [[ -z $id_unbloq ]]; then
         bot_retorno="❌ Usuario no encontrado en la base VIP."
@@ -49,8 +62,15 @@ unblock_fun () {
     if grep -q "^$id_unbloq$" "$bloqfile"; then
         sed -i "/^$id_unbloq$/d" "$bloqfile"
         bot_retorno="✅ Usuario desbloqueado.\nID: $id_unbloq"
+
+        texto="✅ <b>Usuario desbloqueado</b>\n"
+        texto+="🆔 ID: <code>$id_unbloq</code>\n"
+        texto+="👤 Nombre: $nombre_unbloq\n"
+        texto+="🔗 Usuario: @$usuario_unbloq"
+        ShellBot.sendMessage --chat_id "$grupo_admin" --text "$texto" --parse_mode html
     else
         bot_retorno="⚠️ El usuario no estaba bloqueado."
     fi
+
     msj_fun
 }
