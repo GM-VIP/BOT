@@ -53,6 +53,7 @@ source ${SRC}/link
 source ${SRC}/listID
 source ${SRC}/gerar_key
 source ${SRC}/power
+source ${SRC}/test
 source ${SRC}/comandos
 source ${SRC}/update
 source ${SRC}/donar
