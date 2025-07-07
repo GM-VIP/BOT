@@ -2,7 +2,7 @@
 
 vipdb="/etc/ADM-db/VIP-database.json"
 log="/etc/ADM-db/VIP-registrados.log"
-grupo_admin="-1001475120970"
+grupo_admin="-1002826624584"
 
 vip_autoregistro () {
     [[ "$chatuser" == -* ]] && return 0  # Ignora grupos (IDs negativos)
