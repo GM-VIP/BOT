@@ -1,0 +1,47 @@
+kick_fun () {
+    # Ignorar si no es en grupo
+    [[ "${message_chat_type[$id]}" != "supergroup" && "${message_chat_type[$id]}" != "group" ]] && return
+
+    grupo_admin="-1001475120970"  # ID del grupo donde se notificará
+
+    input="${comando[@]:1}"  # Todo lo que venga después de /kick
+    id_input=$(echo "$input" | awk '{print $1}' | sed 's/@//g')  # Primer argumento
+    razon=$(echo "$input" | cut -d' ' -f2-)  # El resto como razón (si hay)
+
+    [[ -z "$id_input" ]] && {
+        bot_retorno="⚠️ Debes ingresar un ID o @usuario\nUso: /kick 123456789 razón"
+        msj_fun
+        return
+    }
+
+    # Buscar ID, nombre y username
+    target_id=$(jq -r ".[] | select(.usuario==\"$id_input\" or .id==\"$id_input\") | .id" /etc/ADM-db/VIP-database.json)
+    target_name=$(jq -r ".[] | select(.id==\"$target_id\") | .nombre" /etc/ADM-db/VIP-database.json)
+    target_user=$(jq -r ".[] | select(.id==\"$target_id\") | .usuario" /etc/ADM-db/VIP-database.json)
+
+    [[ -z "$target_id" ]] && {
+        bot_retorno="❌ Usuario no encontrado en la base VIP."
+        msj_fun
+        return
+    }
+
+    # Ejecutar expulsión
+    ShellBot.kickChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+    ShellBot.unbanChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+
+    # ✅ Nombre del grupo
+    nombre_grupo="${message_chat_title[$id]}"
+
+    # Respuesta en grupo
+    texto="🚫 <b>Usuario expulsado exitosamente</b>\n"
+    texto+="🆔 ID: <code>$target_id</code>\n"
+    texto+="👤 Nombre: $target_name\n"
+    texto+="🔗 Usuario: @$target_user\n"
+    [[ -n "$razon" ]] && texto+="📝 Razón: $razon\n"
+    texto+="🏷️ Grupo: $nombre_grupo"
+
+    ShellBot.sendMessage --chat_id "${message_chat_id[$id]}" --text "$texto" --parse_mode html
+
+    # Notificación en grupo de administración
+    ShellBot.sendMessage --chat_id "$grupo_admin" --text "$texto" --parse_mode html
+}
