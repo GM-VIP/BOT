@@ -30,20 +30,7 @@ kick_fun () {
         return
     }
 
-     # Verificar si el usuario está realmente en el grupo
-
-
-# Verificar si el usuario está en el grupo
-ShellBot.getChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
-
-estado_usuario=$(echo "${return[@]}" | jq -r '.result.status')
-
-if [[ "$estado_usuario" == "left" || "$estado_usuario" == "kicked" || "$estado_usuario" == "null" ]]; then
-    bot_retorno="⚠️ El usuario no se encuentra en el grupo."
-    msj_fun
-    return
-fi
-
+     
 
     # Evitar expulsar administradores o el creador
     if [[ "$estado_usuario" == "administrator" || "$estado_usuario" == "creator" ]]; then
