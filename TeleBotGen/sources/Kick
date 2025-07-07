@@ -30,16 +30,17 @@ kick_fun () {
         return
     }
 
-    # Verificar si el usuario está realmente en el grupo
-    ShellBot.getChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
-    estado_usuario=$(echo "${return[0]}" | jq -r '.result.status')
+     # Verificar si el usuario está realmente en el grupo
+ShellBot.getChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+estado_usuario=$(echo "${return__status}" | grep -o '"status":"[^"]*"' | cut -d':' -f2 | tr -d '"')
 
-    # Validar estado
-    if [[ "$estado_usuario" == "left" || "$estado_usuario" == "kicked" || -z "$estado_usuario" ]]; then
-        bot_retorno="⚠️ El usuario no se encuentra en el grupo."
-        msj_fun
-        return
-    fi
+# Validar estado
+if [[ "$estado_usuario" == "left" || "$estado_usuario" == "kicked" || -z "$estado_usuario" ]]; then
+    bot_retorno="⚠️ El usuario no se encuentra en el grupo."
+    msj_fun
+    return
+fi
+
 
     # Evitar expulsar administradores o el creador
     if [[ "$estado_usuario" == "administrator" || "$estado_usuario" == "creator" ]]; then
