@@ -43,7 +43,7 @@ comand () {
 					 /[Aa]yuda|[Aa]yuda|[Hh]elp|/[Hh]elp)ayuda_src &;;
 					 /[Ii]d|/[Ii]D)myid_src &;;
 					 /[Aa]dd|/[Dd]el)reply &;;
-                                         /[Tt]est)test_fun &;;
+                                         /[Kk]ick)kick_fun &;;
                                          /[Bb]lock)block_fun &;;
                                          /[Uu]nblock)unblock_fun &;;
 					 /[Pp]ower)start_gen &;;
