@@ -27,27 +27,37 @@ kick_fun () {
         return
     }
 
-    # Ejecutar expulsión
-    ShellBot.kickChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
-    ShellBot.unbanChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
-
-    # ✅ Nombre del grupo
-    nombre_grupo="${message_chat_title[$id]}"
-
     # Preparar razón
     [[ -z "$razon" || "$razon" == "$id_input" ]] && razon="✘"
 
-    # Mensaje común
-    texto="🚫 <b>Usuario expulsado exitosamente</b>\n"
-    texto+="🆔 ID: <code>$target_id</code>\n"
-    texto+="👤 Nombre: $target_name\n"
-    texto+="🔗 Usuario: @$target_user\n"
-    texto+="📝 Razón: $razon\n"
-    texto+="🏷️ Grupo: $nombre_grupo"
+    # Nombre del grupo
+    nombre_grupo="${message_chat_title[$id]}"
 
-    # Enviar respuesta en grupo
-    ShellBot.sendMessage --chat_id "${message_chat_id[$id]}" --text "$texto" --parse_mode html
+    # Expulsar al usuario
+    ShellBot.kickChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+    ShellBot.unbanChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
 
-    # Enviar notificación al grupo admin
-    ShellBot.sendMessage --chat_id "$grupo_admin" --text "$texto" --parse_mode html
+    # ✅ Mensaje en el grupo
+    texto_grupo="🚫 <b>Usuario expulsado exitosamente</b>\n"
+    texto_grupo+="🆔 ID: <code>$target_id</code>\n"
+    texto_grupo+="👤 Nombre: $target_name\n"
+    texto_grupo+="🔗 Usuario: @$target_user\n"
+    texto_grupo+="📝 Razón: $razon"
+
+    ShellBot.sendMessage --chat_id "${message_chat_id[$id]}" --text "$texto_grupo" --parse_mode html
+
+    # ✅ Mensaje en grupo de administración
+    texto_admin="🚫 <b>Usuario expulsado exitosamente</b>\n"
+    texto_admin+="🆔 ID: <code>$target_id</code>\n"
+    texto_admin+="👤 Nombre: $target_name\n"
+    texto_admin+="🔗 Usuario: @$target_user\n"
+    texto_admin+="📝 Razón: $razon\n"
+    texto_admin+="🏷️ Grupo: $nombre_grupo\n"
+    texto_admin+="👮‍♂️ Baneado por: @${message_from_username[$id]}"
+
+    ShellBot.sendMessage --chat_id "$grupo_admin" --text "$texto_admin" --parse_mode html
+
+    # ✅ Mensaje al usuario expulsado
+    texto_priv="🚫 Has sido expulsado del grupo:\n🏷️ <b>$nombre_grupo</b>"
+    ShellBot.sendMessage --chat_id "$target_id" --text "$texto_priv" --parse_mode html
 }
