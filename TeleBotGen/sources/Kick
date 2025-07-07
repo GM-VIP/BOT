@@ -30,6 +30,16 @@ kick_fun () {
         return
     }
 
+# Verificar si el usuario está en el grupo
+    ShellBot.getChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+    estado_usuario=$(echo "${return__status}" | grep -o '"status":"[^"]*"' | cut -d':' -f2 | tr -d '"')
+
+    if [[ "$estado_usuario" == "left" || "$estado_usuario" == "kicked" || -z "$estado_usuario" ]]; then
+        bot_retorno="❌ El usuario no se encuentra actualmente en el grupo."
+        msj_fun
+        return
+    fi
+
     # Nombre del grupo
     nombre_grupo="${message_chat_title[$id]}"
 
