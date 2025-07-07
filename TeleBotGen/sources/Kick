@@ -35,7 +35,7 @@ kick_fun () {
 
     # Expulsar al usuario
     ShellBot.kickChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
-    ShellBot.unbanChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+    # ShellBot.unbanChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
 
     # ✅ Mensaje en el grupo
     texto_grupo="🚫 <b>Usuario expulsado exitosamente</b>\n"
