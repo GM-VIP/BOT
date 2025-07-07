@@ -5,10 +5,16 @@ kick_fun () {
     [[ "${message_chat_type[$id]}" != "supergroup" && "${message_chat_type[$id]}" != "group" ]] && return  
 
     grupo_admin="-1002826624584"  # Grupo donde se notificará
-
+    
     input="${comando[@]:1}"  # Todo lo que venga después de /kick
-    id_input=$(echo "$input" | awk '{print $1}' | sed 's/@//g')  # Primer argumento
-    razon=$(echo "$input" | cut -d' ' -f2-)  # El resto como razón (si hay)
+    id_input=$(echo "$input" | awk '{print $1}' | sed 's/@//g')  # Primer argumento (ID o username sin @)
+    razon=$(echo "$input" | cut -d' ' -f2-)  # Resto como razón
+
+# 🛠️ Corrección clave
+[[ -z "$razon" || "$razon" == "$id_input" || "$razon" == "@$id_input" ]] && razon="✘"
+
+
+
 
     [[ -z "$id_input" ]] && {
         bot_retorno="⚠️ Debes ingresar un ID o @usuario\nUso: /kick 123456789 razón"
@@ -26,6 +32,20 @@ kick_fun () {
         msj_fun
         return
     }
+
+# Verificar si el usuario está en el grupo
+ShellBot.getChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+
+# Verificar si fue encontrado o está fuera del grupo
+estado_usuario=$(echo "${return[status]}" | grep -oE '"status":"[^"]+"' | cut -d':' -f2 | tr -d '"')
+
+if [[ "$estado_usuario" == "left" || "$estado_usuario" == "kicked" || -z "$estado_usuario" ]]; then
+    bot_retorno="⚠️ El usuario no se encuentra en el grupo."
+    msj_fun
+    return
+fi
+
+
 
     # Preparar razón
     [[ -z "$razon" || "$razon" == "$id_input" ]] && razon="✘"
