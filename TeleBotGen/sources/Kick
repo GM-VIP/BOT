@@ -4,7 +4,7 @@ kick_fun () {
     # Ignorar si no es en grupo
     [[ "${message_chat_type[$id]}" != "supergroup" && "${message_chat_type[$id]}" != "group" ]] && return  
 
-    grupo_admin="-1001475120970"  # Grupo donde se notificará
+    grupo_admin="-1002826624584"  # Grupo donde se notificará
 
     input="${comando[@]:1}"  # Todo lo que venga después de /kick
     id_input=$(echo "$input" | awk '{print $1}' | sed 's/@//g')  # Primer argumento
