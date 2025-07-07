@@ -3,7 +3,7 @@
 bloqfile="/etc/ADM-db/bloqueados.txt"
 [[ ! -e $bloqfile ]] && touch $bloqfile
 
-grupo_admin="-1001475120970"  # Grupo donde se notifica
+grupo_admin="-1002826624584"  # Grupo donde se notifica
 
 block_fun () {
     id_input=$(echo "${comando[1]}" | sed 's/@//g')
