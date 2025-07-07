@@ -30,15 +30,6 @@ kick_fun () {
         return
     }
 
-     
-
-    # Evitar expulsar administradores o el creador
-    if [[ "$estado_usuario" == "administrator" || "$estado_usuario" == "creator" ]]; then
-        bot_retorno="⚠️ No puedes expulsar a un administrador o al creador del grupo."
-        msj_fun
-        return
-    fi
-
     # Nombre del grupo
     nombre_grupo="${message_chat_title[$id]}"
 
