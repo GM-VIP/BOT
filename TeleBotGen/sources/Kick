@@ -31,7 +31,8 @@ kick_fun () {
     }
 
      # Verificar si el usuario está realmente en el grupo
-ShellBot.getChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+
+ShellBot.getChatMember --chat_id "$chat_id" --user_id "$user_id"
 estado_usuario=$(echo "${return__status}" | grep -o '"status":"[^"]*"' | cut -d':' -f2 | tr -d '"')
 
 # Validar estado
