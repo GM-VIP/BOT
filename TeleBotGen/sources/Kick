@@ -10,11 +10,8 @@ kick_fun () {
     id_input=$(echo "$input" | awk '{print $1}' | sed 's/@//g')  # Primer argumento (ID o username sin @)
     razon=$(echo "$input" | cut -d' ' -f2-)  # Resto como razón
 
-# 🛠️ Corrección clave
-[[ -z "$razon" || "$razon" == "$id_input" || "$razon" == "@$id_input" ]] && razon="✘"
-
-
-
+    # 🛠️ Corrección clave para evitar que la razón sea igual al ID
+    [[ -z "$razon" || "$razon" == "$id_input" || "$razon" == "@$id_input" ]] && razon="✘"
 
     [[ -z "$id_input" ]] && {
         bot_retorno="⚠️ Debes ingresar un ID o @usuario\nUso: /kick 123456789 razón"
@@ -22,7 +19,7 @@ kick_fun () {
         return
     }
 
-    # Buscar ID, nombre y username
+    # Buscar ID, nombre y username desde base de datos
     target_id=$(jq -r ".[] | select(.usuario==\"$id_input\" or .id==\"$id_input\") | .id" /etc/ADM-db/VIP-database.json)
     target_name=$(jq -r ".[] | select(.id==\"$target_id\") | .nombre" /etc/ADM-db/VIP-database.json)
     target_user=$(jq -r ".[] | select(.id==\"$target_id\") | .usuario" /etc/ADM-db/VIP-database.json)
@@ -33,31 +30,32 @@ kick_fun () {
         return
     }
 
-# Verificar si el usuario está en el grupo
-ShellBot.getChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+    # Verificar si el usuario está realmente en el grupo
+    ShellBot.getChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+    estado_usuario=$(echo "${return[0]}" | jq -r '.result.status')
 
-# Verificar si fue encontrado o está fuera del grupo
-estado_usuario=$(echo "${return[status]}" | grep -oE '"status":"[^"]+"' | cut -d':' -f2 | tr -d '"')
+    # Validar estado
+    if [[ "$estado_usuario" == "left" || "$estado_usuario" == "kicked" || -z "$estado_usuario" ]]; then
+        bot_retorno="⚠️ El usuario no se encuentra en el grupo."
+        msj_fun
+        return
+    fi
 
-if [[ "$estado_usuario" == "left" || "$estado_usuario" == "kicked" || -z "$estado_usuario" ]]; then
-    bot_retorno="⚠️ El usuario no se encuentra en el grupo."
-    msj_fun
-    return
-fi
-
-
-
-    # Preparar razón
-    [[ -z "$razon" || "$razon" == "$id_input" ]] && razon="✘"
+    # Evitar expulsar administradores o el creador
+    if [[ "$estado_usuario" == "administrator" || "$estado_usuario" == "creator" ]]; then
+        bot_retorno="⚠️ No puedes expulsar a un administrador o al creador del grupo."
+        msj_fun
+        return
+    fi
 
     # Nombre del grupo
     nombre_grupo="${message_chat_title[$id]}"
 
     # Expulsar al usuario
     ShellBot.kickChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
-     ShellBot.unbanChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
+    ShellBot.unbanChatMember --chat_id "${message_chat_id[$id]}" --user_id "$target_id"
 
-    # ✅ Mensaje en el grupo
+    # ✅ Mensaje en el grupo (sin nombre de grupo)
     texto_grupo="🚫 <b>Usuario expulsado exitosamente</b>\n"
     texto_grupo+="🆔 ID: <code>$target_id</code>\n"
     texto_grupo+="👤 Nombre: $target_name\n"
