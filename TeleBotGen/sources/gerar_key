@@ -36,7 +36,7 @@ TELEGRAM_ID="$message_from_id"
 NOMBRE_COMPLETO="$message_from_first_name $message_from_last_name"
 TAG_NAME="$message_from_username"
 FECHA=$(date +%F)
-KEY_GENERADA="$valuekey"
+KEY_GENERADA="$keyfinal"
 
 # Crear entrada nueva
 nueva_entry=$(jq -n \
