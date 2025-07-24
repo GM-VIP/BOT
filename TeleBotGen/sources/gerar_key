@@ -27,16 +27,7 @@ fun_list "$valuekey"
 #keyfinal="$(ofus "$oUP:8888/${valuekey}/$LIST")"
 keyfinal=$(ofus "$IP:8888/$valuekey/$LIST")
 
-# 2) --- VOLCAR EN /etc/newadm/ID_VIP.json ---
 
-JSON_FILE="/etc/newadm/ID_VIP.json"
-[[ ! -f $JSON_FILE ]] && echo '[]' > $JSON_FILE
-  jq --arg id "$message_from_id" \
-     --arg key "$keyfinal" \
-     '. += [ {user_id: $id, key: $key} ]' \
-     $JSON_FILE > ${JSON_FILE}.tmp \
-    && mv ${JSON_FILE}.tmp $JSON_FILE
-# ---
 
 local bot_retorno="$LINE\n"
 bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
