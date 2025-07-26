@@ -58,9 +58,23 @@ else
 fi
 # === FIN BLOQUE JSON ===
 
-# 1) Extrae sólo los campos que necesitas: keyfinal y TELEGRAM_ID
-jq '[ .[] | { key, id } ]' /etc/ADM-db/ID_VIP.json \
-  > /var/www/html/keys_meta.json
+# --- INICIO BLOQUE GIST ---
+GIST_DESC="Keys actuales"
+JSON_PATH="/etc/ADM-db/ID_VIP.json"
+
+# Buscar y eliminar gist anterior con la misma descripción
+if gist_id=$(gh gist list --limit 100 | awk -v desc="$GIST_DESC" '$0 ~ desc {print $1; exit}'); then
+  gh gist delete "$gist_id" --yes
+fi
+
+# Crear nuevo gist público
+NEW_GIST_URL=$(gh gist create "$JSON_PATH" --public -d "$GIST_DESC" --output=--json url | jq -r '.url')
+
+# Opcional: guardar URL en archivo local
+echo "$NEW_GIST_URL" > /etc/ADM-db/keys_gist_url.txt
+# --- FIN BLOQUE GIST ---
+
+
 
 local bot_retorno="$LINE\n"
 bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
