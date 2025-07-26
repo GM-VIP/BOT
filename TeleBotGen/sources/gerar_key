@@ -59,19 +59,22 @@ else
   jq ". = [$nueva_entry] + ." "$JSON_FILE" > "$tmp" && mv "$tmp" "$JSON_FILE"
 fi
 
+
 # --- INICIO BLOQUE GIST ---
 GIST_DESC="Keys actuales"
 JSON_PATH="/etc/ADM-db/ID_VIP.json"
 GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
 
-if [[ -f "$GIST_FILE" && -s "$GIST_FILE" ]]; then
-  GIST_ID=$(basename "$(cat "$GIST_FILE")")
+if [[ -s "$GIST_FILE" ]]; then
   # Editar gist existente
-  gh gist edit "$GIST_ID" -f "$(basename "$JSON_PATH")" < "$JSON_PATH"
+  GIST_URL=$(cat "$GIST_FILE")
+  GIST_ID=$(basename "$GIST_URL")
+  cp "$JSON_PATH" /tmp/ID_VIP.json # Asegurar el nombre del archivo
+  gh gist edit "$GIST_ID" -f /tmp/ID_VIP.json -F "ID_VIP.json" --desc "$GIST_DESC"
 else
-  # Crear nuevo gist
-  NEW_GIST_URL=$(gh gist create "$JSON_PATH" --public -d "$GIST_DESC" | grep -o 'https://gist.github.com[^ ]*')
-  echo "$NEW_GIST_URL" > "$GIST_FILE"
+  # Crear nuevo gist y guardar la URL
+  GIST_URL=$(gh gist create "$JSON_PATH" --public -d "$GIST_DESC" | grep -o 'https://gist.github.com[^ ]*')
+  echo "$GIST_URL" > "$GIST_FILE"
 fi
 # --- FIN BLOQUE GIST ---
 
