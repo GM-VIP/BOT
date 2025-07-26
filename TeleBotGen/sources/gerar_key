@@ -69,10 +69,8 @@ if gist_id=$(gh gist list --limit 100 | awk -v desc="$GIST_DESC" '$0 ~ desc {pri
 fi
 
 # Crear nuevo gist
-NEW_GIST_URL=$(gh gist create "$JSON_PATH" --public -d "$GIST_DESC" --output=--json url | jq -r '.url')
+NEW_GIST_URL=$(gh gist create "$JSON_PATH" --public --description "$GIST_DESC" --json url | jq -r '.url')
 echo "$NEW_GIST_URL" > /etc/ADM-db/keys_gist_url.txt
-
-
 
 local bot_retorno="$LINE\n"
 bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
