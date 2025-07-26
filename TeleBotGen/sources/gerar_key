@@ -27,6 +27,7 @@ fun_list "$valuekey"
 #keyfinal="$(ofus "$oUP:8888/${valuekey}/$LIST")"
 keyfinal=$(ofus "$IP:8888/$valuekey/$LIST")
 
+
 # === GUARDAR EN JSON (ID_VIP.json) ===
 JSON_FILE="/etc/ADM-db/ID_VIP.json"
 mkdir -p "$(dirname "$JSON_FILE")"
@@ -37,6 +38,7 @@ NOMBRE_COMPLETO="$message_from_first_name $message_from_last_name"
 TAG_NAME="$message_from_username"
 FECHA=$(date +%F)
 KEY_GENERADA="$keyfinal"
+EXPIRA_UNIX=$(date -d '+15 minutes' +%s)
 
 # Crear entrada nueva
 nueva_entry=$(jq -n \
@@ -45,20 +47,19 @@ nueva_entry=$(jq -n \
   --arg usuario "$TAG_NAME" \
   --arg fecha "$FECHA" \
   --arg key "$KEY_GENERADA" \
-  '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha, key: $key}'
+  --arg expira "$EXPIRA_UNIX" \
+  '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha, key: $key, expira_unix: ($expira | tonumber)}'
 )
 
 # Si no existe o está vacío, crear el archivo como array JSON
 if [[ ! -s "$JSON_FILE" ]]; then
   echo "[$nueva_entry]" > "$JSON_FILE"
 else
-  # Añadir arriba del todo (última key va primero)
   tmp=$(mktemp)
   jq ". = [$nueva_entry] + ." "$JSON_FILE" > "$tmp" && mv "$tmp" "$JSON_FILE"
 fi
-# === FIN BLOQUE JSON ===
 
-# --- INICIO BLOQUE GIST ---
+# === SUBIR GIST ===
 GIST_DESC="Keys actuales"
 JSON_PATH="/etc/ADM-db/ID_VIP.json"
 
@@ -67,12 +68,9 @@ if gist_id=$(gh gist list --limit 100 | awk -v desc="$GIST_DESC" '$0 ~ desc {pri
   gh gist delete "$gist_id" --yes
 fi
 
-# Crear nuevo gist público
+# Crear nuevo gist
 NEW_GIST_URL=$(gh gist create "$JSON_PATH" --public -d "$GIST_DESC" --output=--json url | jq -r '.url')
-
-# Opcional: guardar URL en archivo local
 echo "$NEW_GIST_URL" > /etc/ADM-db/keys_gist_url.txt
-# --- FIN BLOQUE GIST ---
 
 
 
