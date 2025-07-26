@@ -28,49 +28,54 @@ fun_list "$valuekey"
 keyfinal=$(ofus "$IP:8888/$valuekey/$LIST")
 
 
- 
-# === GUARDAR EN JSON (ID_VIP.json) SIN EXPIRACIÓN ===
-JSON_FILE="/etc/ADM-db/ID_VIP.json"
-mkdir -p "$(dirname "$JSON_FILE")"
+  # === GUARDAR EN JSON (ID_VIP.json) SIN EXPIRACIÓN ===
+  JSON_FILE="/etc/ADM-db/ID_VIP.json"
+  mkdir -p "$(dirname "$JSON_FILE")"
 
-TELEGRAM_ID="$message_from_id"
-NOMBRE_COMPLETO="$message_from_first_name $message_from_last_name"
-TAG_NAME="$message_from_username"
-FECHA=$(date +%F)
-KEY_GENERADA="$keyfinal"
+  TELEGRAM_ID="$message_from_id"
+  NOMBRE_COMPLETO="$message_from_first_name $message_from_last_name"
+  TAG_NAME="$message_from_username"
+  FECHA=$(date +%F)
+  KEY_GENERADA="$keyfinal"
 
-nueva_entry=$(jq -n \
-  --arg id "$TELEGRAM_ID" \
-  --arg nombre "$NOMBRE_COMPLETO" \
-  --arg usuario "$TAG_NAME" \
-  --arg fecha "$FECHA" \
-  --arg key "$KEY_GENERADA" \
-  '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha, key: $key}'
-)
+  nueva_entry=$(jq -n \
+    --arg id "$TELEGRAM_ID" \
+    --arg nombre "$NOMBRE_COMPLETO" \
+    --arg usuario "$TAG_NAME" \
+    --arg fecha "$FECHA" \
+    --arg key "$KEY_GENERADA" \
+    '{id: $id, nombre: $nombre, usuario: $usuario, fecha: $fecha, key: $key}'
+  )
 
-# Crear archivo como array si no existe o está vacío
-if [[ ! -s "$JSON_FILE" ]]; then
-  echo "[$nueva_entry]" > "$JSON_FILE"
-else
-  tmp=$(mktemp)
-  jq ". = [$nueva_entry] + ." "$JSON_FILE" > "$tmp" && mv "$tmp" "$JSON_FILE"
-fi
+  # Si no existe o está vacío, crea el JSON como array; si no, antepone la nueva entrada
+  if [[ ! -s "$JSON_FILE" ]]; then
+    echo "[$nueva_entry]" > "$JSON_FILE"
+  else
+    tmp=$(mktemp)
+    jq ". = [$nueva_entry] + ." "$JSON_FILE" > "$tmp" && mv "$tmp" "$JSON_FILE"
+  fi
 
-# --- SUBIR/ACTUALIZAR GIST ---
-GIST_DESC="Keys actuales"
-GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
 
-if [[ -s "$GIST_FILE" ]]; then
-  GIST_URL=$(cat "$GIST_FILE")
-  GIST_ID=$(basename "$GIST_URL")
-  cp "$JSON_FILE" /tmp/ID_VIP.json
-  gh gist edit "$GIST_ID" -f /tmp/ID_VIP.json -F "ID_VIP.json" --desc "$GIST_DESC"
-else
-  GIST_URL=$(gh gist create "$JSON_FILE" --public -d "$GIST_DESC" | grep -o 'https://gist.github.com[^ ]*')
-  echo "$GIST_URL" > "$GIST_FILE"
-fi
-# --- FIN GIST ---
+  # --- SUBIR/ACTUALIZAR GIST (solo id y key) ---
+  GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
 
+  # Prepara un JSON temporal que solo incluya id y key
+  TMP_JSON=$(mktemp)
+  jq '[.[] | {id, key}]' "$JSON_FILE" > "$TMP_JSON"
+
+  if [[ -s "$GIST_FILE" ]]; then
+    # Edita el gist existente
+    GIST_URL=$(<"$GIST_FILE")
+    GIST_ID=${GIST_URL##*/}
+    gh gist edit "$GIST_ID" ID_VIP.json -f "$TMP_JSON"
+  else
+    # Crea uno nuevo y guarda la URL
+    NEW_URL=$(gh gist create "$TMP_JSON" --public -d "Keys actuales" \
+               | grep -o 'https://gist.github.com[^ ]*')
+    echo "$NEW_URL" > "$GIST_FILE"
+  fi
+  rm "$TMP_JSON"
+  # --- FIN GIST ---
 
 local bot_retorno="$LINE\n"
 bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
