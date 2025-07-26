@@ -65,16 +65,16 @@ JSON_PATH="/etc/ADM-db/ID_VIP.json"
 GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
 
 if [[ -f "$GIST_FILE" && -s "$GIST_FILE" ]]; then
-  # Si ya existe el Gist, editarlo
-  GIST_URL=$(cat "$GIST_FILE")
-  GIST_ID=$(basename "$GIST_URL")
-  gh gist edit "$GIST_ID" -f ID_VIP.json < "$JSON_PATH"
+  GIST_ID=$(basename "$(cat "$GIST_FILE")")
+  # Editar gist existente
+  gh gist edit "$GIST_ID" -f "$(basename "$JSON_PATH")" < "$JSON_PATH"
 else
-  # Si no existe, crear uno nuevo
+  # Crear nuevo gist
   NEW_GIST_URL=$(gh gist create "$JSON_PATH" --public -d "$GIST_DESC" | grep -o 'https://gist.github.com[^ ]*')
   echo "$NEW_GIST_URL" > "$GIST_FILE"
 fi
 # --- FIN BLOQUE GIST ---
+
 
 local bot_retorno="$LINE\n"
 bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
