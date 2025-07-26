@@ -84,6 +84,34 @@ rm "$TMP_JSON"
 
 
 
+  # ──── A PARTIR DE AQUÍ: PROGRAMAR EL BORRADO EN 15 MIN ────
+
+  # Asegúrate de que GIST_ID esté definido:
+  GIST_ID=$(basename "$GIST_URL")
+
+  cat <<EOF | at now + 15 minutes
+#!/bin/bash
+set -e
+
+GIST_ID="$GIST_ID"
+ID_FOR_AT="$TELEGRAM_ID"
+KEY_FOR_AT="$KEY_GENERADA"
+
+TMP_IN=\$(mktemp)
+gh gist view "\$GIST_ID" --raw ID_VIP.json > "\$TMP_IN"
+
+TMP_OUT=\$(mktemp)
+jq 'del(.[] | select(.id == "'\$ID_FOR_AT'" and .key == "'\$KEY_FOR_AT'" ))' "\$TMP_IN" > "\$TMP_OUT"
+
+gh gist edit "\$GIST_ID" ID_VIP.json -f "\$TMP_OUT"
+
+rm "\$TMP_IN" "\$TMP_OUT"
+EOF
+  # ─────────────────────────────────────────────────────────
+
+
+
+
 local bot_retorno="$LINE\n"
 bot_retorno+="❒════「 ⚜️Script/Key ⚜️ 」═══❒\n"
 bot_retorno+="$LINE\n"
