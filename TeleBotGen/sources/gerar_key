@@ -54,23 +54,22 @@ keyfinal=$(ofus "$IP:8888/$valuekey/$LIST")
     jq ". = [$nueva_entry] + ." "$JSON_FILE" > "$tmp" && mv "$tmp" "$JSON_FILE"
   fi
 
+
+
   # --- SUBIR/ACTUALIZAR GIST (solo id y key) ---
   GIST_DESC="Keys actuales"
   GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
-
-  # Construye un JSON temporal con solo id y key
   TMP_JSON=$(mktemp)
-  jq '[.[] | {id, key}]' "$JSON_FILE" > "$TMP_JSON"
+
+  # Extraemos sólo id & key
+  jq '[.[] | {id, key}]' "/etc/ADM-db/ID_VIP.json" > "$TMP_JSON"
 
   if [[ -s "$GIST_FILE" ]]; then
-    # Ya existe: editamos el mismo Gist
     GIST_URL=$(<"$GIST_FILE")
     GIST_ID=${GIST_URL##*/}
-
-    # gh gist edit espera el nombre original; aquí usas tmp como "ID_VIP.json"
-    gh gist edit "$GIST_ID" --filename ID_VIP.json -f "$TMP_JSON"
+    # EDITAMOS el archivo ID_VIP.json del Gist usando stdin
+    gh gist edit "$GIST_ID" -f ID_VIP.json < "$TMP_JSON"
   else
-    # No existe: creamos uno nuevo y guardamos la URL
     NEW_URL=$(gh gist create "$TMP_JSON" \
                --public \
                -d "$GIST_DESC" \
