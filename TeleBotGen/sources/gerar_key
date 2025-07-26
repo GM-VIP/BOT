@@ -85,7 +85,7 @@ rm "$TMP_JSON"
 
 
 local bot_retorno="$LINE\n"
-bot_retorno+="❒════「 ⚜️Script/Key V⚜️ 」═══❒\n"
+bot_retorno+="❒════「 ⚜️Script/Key ⚜️ 」═══❒\n"
 bot_retorno+="$LINE\n"
 bot_retorno+="👤 Reseller : $(cat ${SCPT_DIR}/menu_credito)\n"
 bot_retorno+="$LINE\n"
@@ -161,7 +161,7 @@ done
 rm ${SCPT_DIR}/*.x.c &> /dev/null
 echo "$nombrevalue" > ${DIR}/${KEY}.name
 [[ ! -z $IPFIX ]] && echo "$IPFIX" > ${DIR}/${KEY}/keyfixa
-at now +30 minutes <<< "rm -rf ${DIR}/${KEY} && rm -rf ${DIR}/${KEY}.name"
+at now +15 minutes <<< "rm -rf ${DIR}/${KEY} && rm -rf ${DIR}/${KEY}.name"
 }
 
 ofus () {
