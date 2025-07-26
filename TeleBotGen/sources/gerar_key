@@ -59,18 +59,22 @@ else
   jq ". = [$nueva_entry] + ." "$JSON_FILE" > "$tmp" && mv "$tmp" "$JSON_FILE"
 fi
 
-# === SUBIR GIST ===
+# --- INICIO BLOQUE GIST ---
 GIST_DESC="Keys actuales"
 JSON_PATH="/etc/ADM-db/ID_VIP.json"
+GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
 
-# Buscar y eliminar gist anterior con la misma descripción
-if gist_id=$(gh gist list --limit 100 | awk -v desc="$GIST_DESC" '$0 ~ desc {print $1; exit}'); then
-  gh gist delete "$gist_id" --yes
+if [[ -f "$GIST_FILE" && -s "$GIST_FILE" ]]; then
+  # Si ya existe el Gist, editarlo
+  GIST_URL=$(cat "$GIST_FILE")
+  GIST_ID=$(basename "$GIST_URL")
+  gh gist edit "$GIST_ID" -f ID_VIP.json < "$JSON_PATH"
+else
+  # Si no existe, crear uno nuevo
+  NEW_GIST_URL=$(gh gist create "$JSON_PATH" --public -d "$GIST_DESC" | grep -o 'https://gist.github.com[^ ]*')
+  echo "$NEW_GIST_URL" > "$GIST_FILE"
 fi
-
-# Crear nuevo gist
-NEW_GIST_URL=$(gh gist create "$JSON_PATH" --public --description "$GIST_DESC" --json url | jq -r '.url')
-echo "$NEW_GIST_URL" > /etc/ADM-db/keys_gist_url.txt
+# --- FIN BLOQUE GIST ---
 
 local bot_retorno="$LINE\n"
 bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
