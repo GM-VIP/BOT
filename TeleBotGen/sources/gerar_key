@@ -57,28 +57,37 @@ keyfinal=$(ofus "$IP:8888/$valuekey/$LIST")
 
 
   # --- SUBIR/ACTUALIZAR GIST (solo id y key) ---
-  GIST_DESC="Keys actuales"
-  GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
-  TMP_JSON=$(mktemp)
+GIST_DESC="Keys actuales"
+GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
+GIST_FILENAME="ID_VIP.json"
+JSON_PATH="/etc/ADM-db/ID_VIP.json"
 
-  # Extraemos sólo id & key
-  jq '[.[] | {id, key}]' "/etc/ADM-db/ID_VIP.json" > "$TMP_JSON"
+# Generamos un JSON temporal con solo id y key
+TMP_JSON=$(mktemp)
+jq '[.[] | {id, key}]' "$JSON_PATH" > "$TMP_JSON"
 
-  if [[ -s "$GIST_FILE" ]]; then
-    GIST_URL=$(<"$GIST_FILE")
-    GIST_ID=${GIST_URL##*/}
-    # EDITAMOS el archivo ID_VIP.json del Gist usando stdin
-    gh gist edit "$GIST_ID" -f ID_VIP.json < "$TMP_JSON"
-  else
-    NEW_URL=$(gh gist create "$TMP_JSON" \
-               --public \
-               -d "$GIST_DESC" \
-             | grep -o 'https://gist.github.com[^ ]*')
-    echo "$NEW_URL" > "$GIST_FILE"
-  fi
+# Si ya tenemos URL, extraemos el GIST_ID y editamos
+if [[ -s "$GIST_FILE" ]]; then
+  GIST_URL=$(<"$GIST_FILE")
+  GIST_ID=${GIST_URL##*/}
 
-  rm "$TMP_JSON"
-  # --- FIN GIST ---
+  # Primero removemos el archivo antiguo
+  gh gist edit "$GIST_ID" --remove "$GIST_FILENAME"
+  # Luego lo añadimos de nuevo desde nuestro TMP_JSON
+  gh gist edit "$GIST_ID" --add "$TMP_JSON:$GIST_FILENAME"
+
+# Si no existe aún, lo creamos y guardamos la URL
+else
+  NEW_URL=$(gh gist create "$TMP_JSON" \
+             --public \
+             -d "$GIST_DESC" \
+           | grep -o 'https://gist.github.com[^ ]*')
+  echo "$NEW_URL" > "$GIST_FILE"
+fi
+
+rm "$TMP_JSON"
+# --- FIN GIST ---
+
 
 
 
