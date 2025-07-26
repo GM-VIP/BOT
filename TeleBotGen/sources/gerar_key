@@ -27,7 +27,6 @@ fun_list "$valuekey"
 #keyfinal="$(ofus "$oUP:8888/${valuekey}/$LIST")"
 keyfinal=$(ofus "$IP:8888/$valuekey/$LIST")
 
-
   # === GUARDAR EN JSON (ID_VIP.json) SIN EXPIRACIÓN ===
   JSON_FILE="/etc/ADM-db/ID_VIP.json"
   mkdir -p "$(dirname "$JSON_FILE")"
@@ -55,35 +54,33 @@ keyfinal=$(ofus "$IP:8888/$valuekey/$LIST")
     jq ". = [$nueva_entry] + ." "$JSON_FILE" > "$tmp" && mv "$tmp" "$JSON_FILE"
   fi
 
-
   # --- SUBIR/ACTUALIZAR GIST (solo id y key) ---
-GIST_DESC="Keys actuales"
-GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
-JSON_FILE="/etc/ADM-db/ID_VIP.json"
+  GIST_DESC="Keys actuales"
+  GIST_FILE="/etc/ADM-db/keys_gist_url.txt"
 
-# Construye un JSON temporal con solo id y key
-TMP_JSON=$(mktemp)
-jq '[.[] | {id, key}]' "$JSON_FILE" > "$TMP_JSON"
+  # Construye un JSON temporal con solo id y key
+  TMP_JSON=$(mktemp)
+  jq '[.[] | {id, key}]' "$JSON_FILE" > "$TMP_JSON"
 
-# Si el fichero de URL existe y no está vacío, edita ese mismo Gist
-if [[ -s "$GIST_FILE" ]]; then
-  GIST_URL=$(<"$GIST_FILE")
-  GIST_ID=${GIST_URL##*/}
+  if [[ -s "$GIST_FILE" ]]; then
+    # Ya existe: editamos el mismo Gist
+    GIST_URL=$(<"$GIST_FILE")
+    GIST_ID=${GIST_URL##*/}
 
-  # Aquí simplemente REEMPLAZAS el contenido del fichero en el Gist
-  gh gist edit "$GIST_ID" -f "$TMP_JSON"
+    # gh gist edit espera el nombre original; aquí usas tmp como "ID_VIP.json"
+    gh gist edit "$GIST_ID" --filename ID_VIP.json -f "$TMP_JSON"
+  else
+    # No existe: creamos uno nuevo y guardamos la URL
+    NEW_URL=$(gh gist create "$TMP_JSON" \
+               --public \
+               -d "$GIST_DESC" \
+             | grep -o 'https://gist.github.com[^ ]*')
+    echo "$NEW_URL" > "$GIST_FILE"
+  fi
 
-# Si no existe, lo creas y guardas la URL
-else
-  NEW_URL=$(gh gist create "$TMP_JSON" \
-             --public \
-             -d "$GIST_DESC" \
-           | grep -o 'https://gist.github.com[^ ]*')
-  echo "$NEW_URL" > "$GIST_FILE"
-fi
+  rm "$TMP_JSON"
+  # --- FIN GIST ---
 
-rm "$TMP_JSON"
-# --- FIN GIST ---
 
 
 local bot_retorno="$LINE\n"
