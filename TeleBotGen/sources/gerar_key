@@ -161,7 +161,7 @@ done
 rm ${SCPT_DIR}/*.x.c &> /dev/null
 echo "$nombrevalue" > ${DIR}/${KEY}.name
 [[ ! -z $IPFIX ]] && echo "$IPFIX" > ${DIR}/${KEY}/keyfixa
-at now +1 minutes <<< "rm -rf ${DIR}/${KEY} && rm -rf ${DIR}/${KEY}.name"
+at now +15 minutes <<< "rm -rf ${DIR}/${KEY} && rm -rf ${DIR}/${KEY}.name"
 }
 
 ofus () {
