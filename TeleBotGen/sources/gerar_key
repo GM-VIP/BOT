@@ -58,6 +58,9 @@ else
 fi
 # === FIN BLOQUE JSON ===
 
+# 1) Extrae sólo los campos que necesitas: keyfinal y TELEGRAM_ID
+jq '[ .[] | { key, id } ]' /etc/ADM-db/ID_VIP.json \
+  > /var/www/html/keys_meta.json
 
 local bot_retorno="$LINE\n"
 bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
