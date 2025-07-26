@@ -85,7 +85,7 @@ rm "$TMP_JSON"
 
 
 local bot_retorno="$LINE\n"
-bot_retorno+="❒════「 ⚜️aScript/Key⚜️ 」═══❒\n"
+bot_retorno+="❒════「 ⚜️Script/Key⚜️ 」═══❒\n"
 bot_retorno+="$LINE\n"
 bot_retorno+="👤 Reseller : $(cat ${SCPT_DIR}/menu_credito)\n"
 bot_retorno+="$LINE\n"
