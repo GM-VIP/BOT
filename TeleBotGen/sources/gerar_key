@@ -113,7 +113,7 @@ EOF
 
 
 local bot_retorno="$LINE\n"
-bot_retorno+="❒════「 ⚜️Script/Key ⚜️ 」═══❒\n"
+bot_retorno+="❒════「 ⚜️Script/Key XD ⚜️ 」═══❒\n"
 bot_retorno+="$LINE\n"
 bot_retorno+="👤 Reseller : $(cat ${SCPT_DIR}/menu_credito)\n"
 bot_retorno+="$LINE\n"
